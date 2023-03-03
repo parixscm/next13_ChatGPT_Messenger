@@ -1,9 +1,15 @@
 "use client";
+import { collection } from "@firebase/firestore";
 import { useSession, signOut } from "next-auth/react";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { db } from "../firebase";
 import NewChat from "./NewChat";
 
 function SideBar() {
   const { data: session } = useSession();
+  const [chats, loading, error] = useCollection(
+    session && collection(db, "users", session.user?.email!, "chats")
+  );
 
   return (
     <div className="p-2 h-screen flex flex-col">
@@ -11,7 +17,10 @@ function SideBar() {
         <div>
           <NewChat />
           <div>{/* Model Selection */}</div>
-          {/* Map Through the Chat Rows */}
+          {chats?.docs.map(chat => (
+            <div></div>
+            // <ChatRow key={chat.id} id={chat.id} />
+          ))}
         </div>
       </div>
 
