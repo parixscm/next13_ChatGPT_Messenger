@@ -5,6 +5,8 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { toast } from "react-hot-toast";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import useSWR from "swr";
+import ModelSelection from "./ModelSelection";
 
 type Props = {
   chatId: string;
@@ -14,8 +16,9 @@ function ChatInput({ chatId }: Props) {
   const [prompt, setPrompt] = useState("");
   const { data: session } = useSession();
 
-  // TODO: useSwr to get model
-  const model = "text-davinci-003";
+  const { data: model } = useSWR("model", {
+    fallbackData: "text-davinci-003",
+  });
 
   const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -85,7 +88,9 @@ function ChatInput({ chatId }: Props) {
           <PaperAirplaneIcon className="w-4 h-4 -rotate-45" />
         </button>
       </form>
-      <div>{/* Model Selection */}</div>
+      <div className="md:hidden">
+        <ModelSelection />
+      </div>
     </div>
   );
 }
